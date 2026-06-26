@@ -8,6 +8,11 @@
 #define SCREEN_HEIGHT 64
 
 
+int lastChannel = -999;
+bool showTitle = false;
+unsigned long titleStartTime = 0;
+
+
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
 
 
@@ -27,9 +32,44 @@ void initDisplay(){
 
 void updateDisplay(int channel){
 
+
+    if(channel != lastChannel && channel !=-1){
+        lastChannel = channel;
+        showTitle = true;
+        titleStartTime=millis();
+
+        display.clearDisplay();
+        display.setTextColor(SSD1306_WHITE);
+        display.setCursor(5, 20);
+        display.setTextSize(2);
+
+        display.print("Channel: ");
+        display.println(channel);
+        display.display();
+
+        return;
+    }
+    else if(channel == -1){
+        display.clearDisplay();
+        display.display();
+        return;
+    }
+
+    if(showTitle){
+        if(millis()-titleStartTime < 1000){
+            return;
+        }
+        else{
+            showTitle = false;
+        }
+    }
+
+    display.clearDisplay();
+
+
     switch(channel){
         case -1:
-        display.clearDisplay();
+        display.display();
         break;
 
         case 0:
@@ -38,8 +78,10 @@ void updateDisplay(int channel){
         break;
 
         case 1:
-        display.clearDisplay();
-        display.println("Channel: 1");
+        display.setCursor(5,20);
+        display.setTextSize(2);
+        display.println("Hello!");
+        display.display();
         break;
     }
  

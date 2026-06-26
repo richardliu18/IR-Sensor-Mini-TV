@@ -10,7 +10,8 @@ int vx = 1;
 int vy = 0;
 
 unsigned long lastThink = 0;
-
+int frame = 0;
+unsigned long lastFrameTime = 0;
 
 //Fish Frame 1 bitmap
 const unsigned char epd_bitmap_fish1left [] PROGMEM = {
@@ -21,13 +22,32 @@ const unsigned char epd_bitmap_fish1right [] PROGMEM = {
 	0x00, 0x00, 0x71, 0x80, 0x51, 0xc0, 0x5f, 0xe0, 0x80, 0x1c, 0x80, 0x04, 0x40, 0x12, 0x40, 0x02, 
 	0x40, 0x22, 0x40, 0x1e, 0x40, 0x02, 0x4c, 0x06, 0x7f, 0xfc, 0x03, 0xe0, 0x03, 0xe0, 0x00, 0xc0
 };
+const unsigned char epd_bitmap_fish2right [] PROGMEM = {
+	0x00, 0x00, 0x07, 0x00, 0xe3, 0x80, 0xbf, 0xe0, 0x80, 0x1c, 0x80, 0x04, 0x80, 0x12, 0xc0, 0x02, 
+	0x40, 0x22, 0x40, 0x1e, 0x40, 0x02, 0x4c, 0x06, 0x7f, 0xfc, 0x07, 0xc0, 0x03, 0xc0, 0x03, 0x80
+};
+const unsigned char epd_bitmap_fish2left [] PROGMEM = {
+	0x00, 0x00, 0x00, 0xe0, 0x01, 0xc7, 0x07, 0xfd, 0x38, 0x01, 0x20, 0x01, 0x48, 0x01, 0x40, 0x03, 
+	0x44, 0x02, 0x78, 0x02, 0x40, 0x02, 0x60, 0x32, 0x3f, 0xfe, 0x03, 0xe0, 0x03, 0xc0, 0x01, 0xc0
+};
 
 void drawFish(int x, int y){
     if(vx<=0){
-        display.drawBitmap( x, y, epd_bitmap_fish1left, 16, 16, SSD1306_WHITE); //going left
+        if(frame == 0){
+            display.drawBitmap( x, y, epd_bitmap_fish1left, 16, 16, SSD1306_WHITE); //going left
+        }
+        else{
+            display.drawBitmap( x, y, epd_bitmap_fish2left, 16, 16, SSD1306_WHITE); //left second frame
+        }
+        
     }
-    else if(vx>0){
-        display.drawBitmap( x, y, epd_bitmap_fish1right, 16, 16, SSD1306_WHITE); //going right
+    else{
+        if(frame == 0){
+            display.drawBitmap( x, y, epd_bitmap_fish1right, 16, 16, SSD1306_WHITE); //going right
+        }
+        else{
+            display.drawBitmap( x, y, epd_bitmap_fish2right, 16, 16, SSD1306_WHITE); //right second frame
+        }
     }
     
 
@@ -35,6 +55,16 @@ void drawFish(int x, int y){
 }
 
 void updateFish(){
+
+    if(millis()-lastFrameTime > 300){
+        if(frame ==0){
+            frame = 1;
+        }
+        else{
+            frame = 0;
+        }
+        lastFrameTime = millis();
+    }
 
     fishX+=vx;
     fishY+=vy;
@@ -56,13 +86,9 @@ void updateFish(){
 
 void showFish(){
 
-    display.clearDisplay();
-
     updateFish();
 
     drawFish(fishX, fishY);
 
-    // display.display();
-    delay(50);
     
 }
