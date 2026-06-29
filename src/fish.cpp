@@ -13,6 +13,10 @@ unsigned long lastThink = 0;
 int frame = 0;
 unsigned long lastFrameTime = 0;
 
+bool foodActive = false;
+int foodX = 0;
+int foodY = 0;
+
 //Fish Frame 1 bitmap
 const unsigned char epd_bitmap_fish1left [] PROGMEM = {
     0x00, 0x00, 0x01, 0x8e, 0x03, 0x8a, 0x07, 0xfa, 0x38, 0x01, 0x20, 0x01, 0x48, 0x02, 0x40, 0x02, 
@@ -56,7 +60,38 @@ void drawFish(int x, int y){
 
 void updateFish(){
 
-    if(millis()-lastFrameTime > 300){
+    if(foodActive){
+        if(foodX>fishX){
+            vx=1;
+        }
+        else if(foodX<fishX){
+            vx=-1;
+        }
+        else{
+            vx=0;
+        }
+
+        if(foodY>fishY){
+            vy=1;
+        }
+        else if(foodY<fishY){
+            vy=-1;
+        }
+        else{
+            vy=0;
+        }
+
+    }
+
+    if(foodActive){
+        if(abs(fishX - foodX) < 8 && abs(fishY - foodY) < 8){
+            foodActive = false;
+            vx = 0;
+            vy = 0;
+        }
+}
+
+    if(millis()-lastFrameTime > 300){ // animation frames of fish swimming
         if(frame ==0){
             frame = 1;
         }
@@ -69,26 +104,52 @@ void updateFish(){
     fishX+=vx;
     fishY+=vy;
 
-    if(fishX<0 || fishX>112){
+if(fishX<0 || fishX>112){
         vx=-vx; // bounce off sides
     }
     if(fishY<10 || fishY>48){
         vy=-vy; // bounce off top and bottom
     }
-    if(millis() - lastThink > random(2000,4000)){
+    if(millis() - lastThink > random(2000,4000)){ //random thinking time
         lastThink=millis();
 
         vx = random(-1,2);
         vy = random(-1,2);
         
     }
+
+}
+void spawnFood(){
+    foodActive=true;
+    foodX=random(10,118);
+    foodY=0;
+}
+
+void updateFood(){
+    if(foodActive){
+        foodY+=1;
+
+        if(foodY>56){
+            foodActive=false;
+        }
+    }
+}
+
+void drawFood(){
+    if(foodActive){
+        display.fillCircle(foodX, foodY, 2, SSD1306_WHITE);
+    }
 }
 
 void showFish(){
 
     updateFish();
+    updateFood();
+
 
     drawFish(fishX, fishY);
+    drawFood();
 
     
 }
+

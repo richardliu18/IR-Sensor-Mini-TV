@@ -24,7 +24,7 @@ void loop(){
   
   TV_LOGIC(code);
   
-  updateDisplay(getCurrentChannel());
+  updateDisplay(getCurrentChannel(), getInteractButton());
 
 }
 

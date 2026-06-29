@@ -30,7 +30,7 @@ void initDisplay(){
     display.display();
 }
 
-void updateDisplay(int channel){
+void updateDisplay(int channel, bool interactButton){
 
 
     if(channel != lastChannel && channel !=-1){
@@ -74,6 +74,9 @@ void updateDisplay(int channel){
 
         case 0:
         showFish();
+        if(interactButton){
+            spawnFood();
+        }
         display.display();
         break;
 

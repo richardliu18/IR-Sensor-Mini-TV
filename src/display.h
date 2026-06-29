@@ -7,6 +7,6 @@
 extern Adafruit_SSD1306 display;
 
 void initDisplay();
-void updateDisplay(int channel);
+void updateDisplay(int channel, bool interactButton);
 
 #endif

@@ -1,10 +1,13 @@
 #include <Arduino.h>
 
 int currentChannel = 1;
+bool interactButton = false;
 
 
 void TV_LOGIC(uint32_t code){
 
+
+    interactButton = false;
 
    switch(code){
      case 0xBA45FF00:
@@ -61,10 +64,18 @@ void TV_LOGIC(uint32_t code){
      Serial.println("9 pressed");
      currentChannel=9;
      break;
+
+     case 0xBF40FF00:
+     Serial.println("Play/pause pressed");
+     interactButton = true;
+     break;
     
    }
 }
 
 int getCurrentChannel(){
     return currentChannel;
+}
+bool getInteractButton(){
+  return interactButton;
 }
