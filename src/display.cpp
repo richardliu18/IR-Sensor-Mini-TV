@@ -3,6 +3,7 @@
 #include <Adafruit_SSD1306.h>
 #include "display.h"
 #include <fish.h>
+#include <dvd.h>
 
 #define SCREEN_WIDTH 128
 #define SCREEN_HEIGHT 64
@@ -86,6 +87,12 @@ void updateDisplay(int channel, bool interactButton){
         display.println("Hello!");
         display.display();
         break;
+
+        case 2:
+        showDVD();
+        display.display();
+        break;
+
     }
  
 
